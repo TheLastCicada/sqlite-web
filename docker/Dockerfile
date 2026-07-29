@@ -28,6 +28,7 @@ ENV CFLAGS="-DSQLITE_DEFAULT_CACHE_SIZE=-8000 \
             -DSQLITE_DEFAULT_WAL_AUTOCHECKPOINT=512 \
             -DHAVE_USLEEP \
             -O2 -fPIC"
+# peewee >= 4.2 breaks sqlite-web's bare_fields introspection (max_length on BareField)
 RUN apk update \
       && apk add --no-cache --virtual .build-deps build-base libressl coreutils gcc libc-dev linux-headers make tar wget tcl tcl-dev dpkg dpkg-dev \
       && wget https://www.sqlite.org/src/tarball/sqlite.tar.gz?r=release -O sqlite.tar.gz -q \
@@ -41,7 +42,7 @@ RUN apk update \
       && rm -rf ./sqlite/ ./sqlite.tar.gz \
       && pip install --upgrade pip \
       && pip install --no-cache-dir cython gevent \
-      && pip install --no-cache-dir flask peewee sqlite-web \
+      && pip install --no-cache-dir flask 'peewee<4.2' sqlite-web \
       && apk del .build-deps
 EXPOSE 8080
 VOLUME /data
