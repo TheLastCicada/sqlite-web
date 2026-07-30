@@ -21,8 +21,10 @@ jobs:
           password: ${{secrets.GITHUB_TOKEN}}
       - name: Build and publish multiarch image
         run: |
+          # ghcr rejects uppercase, and repository_owner preserves case.
+          owner=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
           docker buildx build \
             --platform linux/amd64,linux/arm64 \
-            --tag ghcr.io/coleifer/sqlite-web:latest \
+            --tag "ghcr.io/$owner/sqlite-web:latest" \
             --push \
             ./docker
